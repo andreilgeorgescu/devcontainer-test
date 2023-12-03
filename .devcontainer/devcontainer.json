@@ -1,0 +1,17 @@
+{
+    "image": "mcr.microsoft.com/devcontainers/base:1-ubuntu-22.04",
+    "features": {
+        "ghcr.io/trunk-io/devcontainer-feature/trunk:1": {}
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "EditorConfig.EditorConfig",
+                "redhat.vscode-yaml",
+                "remcohaszing.schemastore",
+                "tamasfe.even-better-toml"
+            ]
+        }
+    },
+    "updateContentCommand": "trunk install"
+}
