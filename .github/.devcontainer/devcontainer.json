@@ -9,7 +9,8 @@
         "EditorConfig.EditorConfig",
         "redhat.vscode-yaml",
         "remcohaszing.schemastore",
-        "tamasfe.even-better-toml"
+        "tamasfe.even-better-toml",
+        "christian-kohler.path-intellisense"
       ],
       "settings": {
         "editorconfig.generateAuto": false,
@@ -25,7 +26,8 @@
         "trunk.inlineDecorators": false,
         "yaml.extension.recommendations": false,
         "yaml.format.enable": false,
-        "yaml.validate": false
+        "yaml.validate": false,
+        "path-intellisense.autoSlashAfterDirectory": true
       }
     }
   },
