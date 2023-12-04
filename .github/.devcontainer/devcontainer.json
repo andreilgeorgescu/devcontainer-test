@@ -29,5 +29,5 @@
       }
     }
   },
-  "updateContentCommand": "curl 'https://www.toptal.com/developers/gitignore/api/git,linux,zsh,visualstudiocode' > .gitignore && curl 'https://raw.githubusercontent.com/andreilgeorgescu/devcontainer-base/main/.editorconfig' > .editorconfig && trunk install"
+  "updateContentCommand": "curl 'https://www.toptal.com/developers/gitignore/api/linux,git,zsh,visualstudiocode' > .gitignore && curl 'https://raw.githubusercontent.com/andreilgeorgescu/devcontainer-base/main/.editorconfig' > .editorconfig && trunk install"
 }
