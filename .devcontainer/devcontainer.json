@@ -7,7 +7,10 @@
     "vscode": {
       "extensions": [
         "christian-kohler.path-intellisense",
+        "eamodio.gitlens",
         "GitHub.copilot",
+        "GitHub.vscode-github-actions",
+        "GitHub.vscode-pull-request-github",
         "ms-vsliveshare.vsliveshare",
         "redhat.vscode-yaml",
         "remcohaszing.schemastore",
