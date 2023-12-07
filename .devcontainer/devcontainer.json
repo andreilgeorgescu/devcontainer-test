@@ -7,6 +7,8 @@
     "vscode": {
       "extensions": [
         "christian-kohler.path-intellisense",
+        "GitHub.copilot",
+        "ms-vsliveshare.vsliveshare",
         "redhat.vscode-yaml",
         "remcohaszing.schemastore",
         "tamasfe.even-better-toml"
@@ -50,16 +52,29 @@
         "markdown.updateLinksOnFileMove.enabled": "always",
         "notebook.formatOnSave.enabled": true,
         //// Codespace Specific
+        // GitHub Copilot
+        "github.copilot.enable": {
+          "*": true,
+          "plaintext": false,
+          "markdown": true,
+          "scminput": true
+        },
+        // GitHub Copilot Chat
+        "github.copilot.chat.welcomeMessage": "never",
+        // Live Share
+        "liveshare.launcherClient": "visualStudioCode",
+        "liveshare.notebooks.allowGuestExecuteCells": true,
         // Path Intellisense
+        "javascript.suggest.paths": false,
         "path-intellisense.autoSlashAfterDirectory": true,
+        "path-intellisense.autoTriggerNextSuggestion": true,
+        "typescript.suggest.paths": false,
         // Trunk Check
         "editor.defaultFormatter": "trunk.io",
         "files.readonlyExclude": {
           ".trunk/configs/**/*": true,
           ".trunk/trunk.yaml": true
         },
-        "trunk.autoInit": false,
-        "trunk.inlineDecorators": false,
         // YAML
         "yaml.extension.recommendations": false,
         "yaml.format.enable": false,
