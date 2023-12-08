@@ -15,9 +15,9 @@
         "GitHub.vscode-pull-request-github",
         "joshbolduc.commitlint",
         "ms-vsliveshare.vsliveshare",
-        // "redhat.vscode-yaml",
-        // "remcohaszing.schemastore",
-        // "tamasfe.even-better-toml"
+        "redhat.vscode-yaml",
+        "remcohaszing.schemastore",
+        "tamasfe.even-better-toml",
         "Tyriar.lorem-ipsum",
         "Tyriar.sort-lines"
       ],
