@@ -11,6 +11,7 @@
         "GitHub.copilot",
         "GitHub.vscode-github-actions",
         "GitHub.vscode-pull-request-github",
+        "joshbolduc.commitlint",
         "ms-vsliveshare.vsliveshare",
         "redhat.vscode-yaml",
         "remcohaszing.schemastore",
@@ -64,6 +65,20 @@
         },
         // GitHub Copilot Chat
         "github.copilot.chat.welcomeMessage": "never",
+        // GitHub Pull Requests and Issues
+        "githubIssues.createIssueTriggers": [],
+        "githubIssues.workingIssueFormatScm": "<type>(<scope>): ${issueTitle}\n\nResolves ${issueNumberLabel}",
+        "githubPullRequests.assignCreated": "${user}",
+        "githubPullRequests.defaultCreateOption": "createAutoMerge",
+        "githubPullRequests.defaultMergeMethod": "squash",
+        "githubPullRequests.notifications": "pullRequests",
+        "githubPullRequests.pullBranch": "always",
+        "githubPullRequests.pushBranch": "always",
+        "githubPullRequests.terminalLinksHandler": "vscode",
+        // GitLens
+        "gitlens.currentLine.enabled": false,
+        "gitlens.defaultDateFormat": "YYYY-MM-DD",
+        "gitlens.defaultTimeFormat": "H:mm",
         // Live Share
         "liveshare.launcherClient": "visualStudioCode",
         "liveshare.notebooks.allowGuestExecuteCells": true,
