@@ -20,7 +20,7 @@ jobs:
           repo="${{ github.repository }}"
           api_url="${{ github.api_url }}"
 
-          issue_title=$(gh issue view $pr_number --json title -R $repo --jq '.title')
+          issue_title=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "$api_url/repos/$repo/issues/$pr_number" | jq -r '.title')
 
           if [[ ! "$title" =~ $pattern ]]; then
             echo "::error::Pull request title must follow Conventional Commits."
@@ -31,3 +31,4 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
