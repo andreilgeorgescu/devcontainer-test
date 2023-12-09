@@ -1,4 +1,4 @@
-name: Lint PR Title
+name: Lint PR Title and Associated Issue Title
 on:
   pull_request:
     types:
@@ -12,18 +12,32 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Check PR Title
+      - name: Check PR Title and Associated Issue Title
         run: |
           python - <<EOF
           import re
           import os
+          import requests
+          from github import Github
 
           pattern = r'^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9-]+\))?:\s[a-z0-9\s-]+[a-z0-9\s]$'
           title = os.getenv("INPUT_PULL_REQUEST_TITLE")
 
-          if not re.match(pattern, title):
-              print("::error::Pull request title must start with 'PR-' followed by a number.")
+          # Get the associated issue number
+          issue_url = os.getenv("GITHUB_API_URL") + "/repos/" + os.getenv("GITHUB_REPOSITORY") + "/pulls/" + os.getenv("GITHUB_PR_NUMBER") + "/issue"
+          response = requests.get(issue_url, headers={"Authorization": "token " + os.getenv("GITHUB_TOKEN")})
+          issue_data = response.json()
+          issue_title = issue_data["title"]
+
+          if not re.match(pattern, title)":
+              print("::error::Pull request title must match conventional commits.")
+              exit(1)
+          elif title != issue_title:
+              print(f"::error::Pull request title '{title}' does not match the associated issue title '{issue_title}'.")
               exit(1)
           EOF
         env:
           INPUT_PULL_REQUEST_TITLE: ${{ github.event.pull_request.title }}
+          GITHUB_API_URL: ${{ github.api_url }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
