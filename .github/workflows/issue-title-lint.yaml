@@ -1,8 +1,8 @@
-name: Lint Pull Request Title
+name: PR Title Linter
 
 on:
   pull_request:
-    types: [opened, edited, synchronize, reopened]
+    types: [opened, edited, synchronize]
 
 permissions: read-all
 
@@ -11,54 +11,53 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      checks: write
       pull-requests: read
     steps:
-      - name: Lint Pull Request Title
-        uses: actions/github-script@v7
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          script: |
-            const prNumber = context.payload.pull_request.number;
-            const prTitle = context.payload.pull_request.title;
-            const repo = context.repo.repo;
-            const owner = context.repo.owner;
-            const issueNumberRegex = /Resolves #(\d+)/;
-            const compliantTitleRegex = /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9-]+\))?:\s[a-z0-9\s-]+[a-z0-9\s]\n\nResolves #\d+$/;
+          python-version: 3.x
 
-            const isTitleCompliant = compliantTitleRegex.test(prTitle);
-            const issueMatch = prTitle.match(issueNumberRegex);
-            const linkedIssueNumber = issueMatch ? parseInt(issueMatch[1], 10) : null;
+      - name: Install Python dependencies
+        run: pip install requests PyGithub
 
-            let conclusion = 'success';
-            let summary = 'Pull request title is compliant and linked to an issue with a matching title.';
+      - name: Lint PR Title
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          import os
+          import re
+          from github import Github
 
-            if (!isTitleCompliant || !linkedIssueNumber) {
-              conclusion = 'failure';
-              summary = 'Pull request title is non-compliant or not linked to an issue.';
-            } else {
-              const { data: linkedIssue } = await github.rest.issues.get({
-                owner,
-                repo,
-                issue_number: linkedIssueNumber,
-              });
+          # Initialize GitHub client
+          g = Github(os.getenv('GITHUB_TOKEN'))
 
-              if (linkedIssue.title !== prTitle.split('\n')[0]) {
-                conclusion = 'failure';
-                summary = 'Pull request title does not match the linked issue title.';
-              }
-            }
+          # Fetch the PR details
+          repo_name = os.getenv('GITHUB_REPOSITORY')
+          pr_number = os.getenv('GITHUB_EVENT_PATH').split('/')[-1]
+          repo = g.get_repo(repo_name)
+          pr = repo.get_pull(int(pr_number))
 
-            // Create or update a check run
-            await github.rest.checks.create({
-              owner,
-              repo,
-              name: 'Lint Pull Request Title',
-              head_sha: context.payload.pull_request.head.sha,
-              status: 'completed',
-              conclusion: conclusion,
-              output: {
-                title: 'Lint Result',
-                summary: summary,
-              },
-              pull_request: prNumber
-            });
+          # Regex for title validation
+          title_regex = r'^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9-]+\))?:\s[a-z0-9\s-]+[a-z0-9\s]\n\nResolves #\d+$'
+
+          # Check if PR title matches the regex
+          if not re.match(title_regex, pr.title):
+              print("PR title does not match the required format")
+              exit(1)
+
+          # Extract issue number from PR title
+          issue_number = re.search(r'Resolves #(\d+)$', pr.title).group(1)
+
+          # Fetch the issue title
+          issue = repo.get_issue(int(issue_number))
+
+          # Compare PR title and issue title
+          if pr.title != issue.title:
+              print("PR title does not match the issue title")
+              exit(1)
+
+          print("PR title is valid")
