@@ -33,7 +33,8 @@ jobs:
       - name: Check for Commits on the Branch
         id: check-commits
         run: |
-          commit_count=$(git rev-list --count ${GITHUB_REF}..origin/${{ github.event.repository.default_branch }})
+          default_branch=$(gh repo view --json default_branch -q '.default_branch')
+          commit_count=$(gh pr list --base "$default_branch" --head "${GITHUB_REF#refs/heads/}" --json number --jq '. | length')
           if [ "$commit_count" -gt "0" ]; then
             echo "Commits found on the branch."
             echo "HAS_COMMITS=true" >> $GITHUB_ENV
@@ -41,6 +42,8 @@ jobs:
             echo "No commits found on the branch."
             echo "HAS_COMMITS=false" >> $GITHUB_ENV
           fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract Commit Details and Create Pull Request
         if: steps.check-pr.outputs.pr_exists == 'false' && steps.check-commits.outputs.has_commits == 'true'
