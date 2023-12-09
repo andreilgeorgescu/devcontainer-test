@@ -2,7 +2,7 @@ name: Compare PR and Issue Titles
 
 on:
   pull_request:
-    types: [opened, edited, reopened, edited]
+    types: [opened, edited, reopened]
 
 jobs:
   compare-titles:

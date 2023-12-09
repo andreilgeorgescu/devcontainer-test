@@ -25,6 +25,7 @@ jobs:
           if [[ ! "$title" =~ $pattern ]]; then
             echo "::error::Pull request title must follow Conventional Commits."
             exit 1
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
