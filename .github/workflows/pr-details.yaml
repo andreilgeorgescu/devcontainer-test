@@ -1,15 +1,19 @@
-name: Fetch Linked Issue Info
+name: Compare PR and Issue Titles
 
 on:
   pull_request:
     types: [opened, edited, reopened, edited]
 
 jobs:
-  fetch-linked-issue:
+  compare-titles:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Get PR Title
+        id: get-pr-title
+        run: echo "::set-output name=PR_TITLE::${{ github.event.pull_request.title }}"
 
       - name: Get Linked Issue Number
         id: get-issue-number
@@ -17,9 +21,21 @@ jobs:
           ISSUE_NUMBER=$(echo '${{ github.event.pull_request.body }}' | grep -oP '(?<=Resolves #)\d+')
           echo "::set-output name=ISSUE_NUMBER::$ISSUE_NUMBER"
 
-      - name: Fetch Issue Details
+      - name: Fetch Issue Title
+        if: steps.get-issue-number.outputs.ISSUE_NUMBER != ''
+        id: get-issue-title
+        run: |
+          ISSUE_DATA=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                        -H "Accept: application/vnd.github.v3+json" \
+                        https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.get-issue-number.outputs.ISSUE_NUMBER }})
+          ISSUE_TITLE=$(echo $ISSUE_DATA | jq -r '.title')
+          echo "::set-output name=ISSUE_TITLE::$ISSUE_TITLE"
+
+      - name: Compare Titles
         if: steps.get-issue-number.outputs.ISSUE_NUMBER != ''
         run: |
-          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-               -H "Accept: application/vnd.github.v3+json" \
-               https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.get-issue-number.outputs.ISSUE_NUMBER }}
+          if [ "${{ steps.get-pr-title.outputs.PR_TITLE }}" != "${{ steps.get-issue-title.outputs.ISSUE_TITLE }}" ]; then
+            echo "Titles do not match!"
+            exit 1
+          fi
+          echo "Titles match."
