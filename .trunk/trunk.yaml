@@ -2,15 +2,15 @@
 # To learn more about the format of this file, see https://docs.trunk.io/reference/trunk-yaml
 version: 0.1
 cli:
-  version: 1.17.2
+  version: 1.18.0
   sha256:
-    darwin_arm64: 5de2f7d68e8941d268d85b337859bac0ad890a76535b9c972acdf99b708aeff8
-    darwin_x86_64: b2d65d906a4c946e2b87d11c62d306fe7899ccfae31bb78429b328da000b4cb0
-    linux_x86_64: b192cf635142b8f043f435012c69e4e95989d5420bdbe66e3caad74cf2be6636
+    darwin_arm64: 70227eeaff161c453e13025e0cd214d31f54c7d6a9edf775f2dc8c1bd0f7a57e
+    darwin_x86_64: b605190cb12f4208673c9b30b6be90aa45b70db9f6ea5354c1c3b63574036d38
+    linux_x86_64: f52eb67225f8e05b6b24f839ca106eebca6560528cf8d72173d17fa77c0cf998
 plugins:
   sources:
     - id: trunk
-      ref: v1.3.0
+      ref: v1.4.0
       uri: https://github.com/trunk-io/plugins
 runtimes:
   enabled:
@@ -22,8 +22,8 @@ lint:
     - checkov@3.1.9
     - git-diff-check
     - prettier@3.1.0
-    - trivy@0.47.0
-    - trufflehog@3.63.2-rc0
+    - trivy@0.48.0
+    - trufflehog@3.63.2
     - yamllint@1.33.0
 actions:
   enabled:
