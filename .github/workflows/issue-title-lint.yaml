@@ -28,36 +28,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          import os
-          import re
-          from github import Github
-
-          # Initialize GitHub client
-          g = Github(os.getenv('GITHUB_TOKEN'))
-
-          # Fetch the PR details
-          repo_name = os.getenv('GITHUB_REPOSITORY')
-          pr_number = os.getenv('GITHUB_EVENT_PATH').split('/')[-1]
-          repo = g.get_repo(repo_name)
-          pr = repo.get_pull(int(pr_number))
-
-          # Regex for title validation
-          title_regex = r'^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9-]+\))?:\s[a-z0-9\s-]+[a-z0-9\s]\n\nResolves #\d+$'
-
-          # Check if PR title matches the regex
-          if not re.match(title_regex, pr.title):
-              print("PR title does not match the required format")
-              exit(1)
-
-          # Extract issue number from PR title
-          issue_number = re.search(r'Resolves #(\d+)$', pr.title).group(1)
-
-          # Fetch the issue title
-          issue = repo.get_issue(int(issue_number))
-
-          # Compare PR title and issue title
-          if pr.title != issue.title:
-              print("PR title does not match the issue title")
-              exit(1)
-
-          print("PR title is valid")
+          python -c "import os; import re; from github import Github;\
+          g = Github(os.getenv('GITHUB_TOKEN'));\
+          repo_name = os.getenv('GITHUB_REPOSITORY');\
+          pr_number = os.getenv('GITHUB_EVENT_PATH').split('/')[-1];\
+          repo = g.get_repo(repo_name);\
+          pr = repo.get_pull(int(pr_number));\
+          title_regex = r'^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9-]+\))?:\s[a-z0-9\s-]+[a-z0-9\s]\n\nResolves #\d+$';\
+          if not re.match(title_regex, pr.title):\
+              print('PR title does not match the required format');\
+              exit(1);\
+          issue_number = re.search(r'Resolves #(\d+)$', pr.title).group(1);\
+          issue = repo.get_issue(int(issue_number));\
+          if pr.title != issue.title:\
+              print('PR title does not match the issue title');\
+              exit(1);\
+          print('PR title is valid')"
