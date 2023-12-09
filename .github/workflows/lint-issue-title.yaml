@@ -13,7 +13,7 @@ jobs:
       issues: write
     steps:
       - name: Open or Close Issue Based on Title
-        uses: actions/github-script@v5
+        uses: actions/github-script@v7
         with:
           script: |
             const title = context.payload.issue.title;
@@ -23,7 +23,7 @@ jobs:
 
             if (isTitleCompliant && issueState === 'closed') {
               // Reopen the issue if the title is now compliant
-              github.issues.update({
+              await github.rest.issues.update({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -31,14 +31,14 @@ jobs:
               });
             } else if (!isTitleCompliant && issueState === 'open') {
               // Close the issue if the title is non-compliant
-              github.issues.createComment({
+              await github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 body: '⚠️ This issue has been closed due to a non-compliant title. Please update the title to comply with our standards (Conventional Commits, all lowercase) and the issue will be reopened.'
               });
 
-              github.issues.update({
+              await github.rest.issues.update({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
