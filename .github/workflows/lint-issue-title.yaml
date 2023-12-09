@@ -21,6 +21,24 @@ jobs:
             const compliantTitleRegex = /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9-]+\))?:\s[a-z0-9\s-]+[^\.]$/;
             const isTitleCompliant = compliantTitleRegex.test(title);
 
+            const commentBody = `
+              ⚠️ This issue has been closed due to a non-compliant title. Please update the title to comply with our standards. The issue title should start with one of the following types:
+
+              \`feat\`: A new feature
+              \`fix\`: A bug fix
+              \`docs\`: Documentation only changes
+              \`style\`: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+              \`refactor\`: A code change that neither fixes a bug nor adds a feature
+              \`perf\`: A code change that improves performance
+              \`test\`: Adding missing tests or correcting existing tests
+              \`build\`: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
+              \`ci\`: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
+              \`chore\`: Other changes that don't modify src or test files
+              \`revert\`: Reverts a previous commit
+
+              For more information on Conventional Commits, please visit [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+            `;
+
             if (isTitleCompliant && issueState === 'closed') {
               // Reopen the issue if the title is now compliant
               await github.rest.issues.update({
@@ -35,7 +53,7 @@ jobs:
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: '⚠️ This issue has been closed due to a non-compliant title. Please update the title to comply with our standards (Conventional Commits, all lowercase) and the issue will be reopened.'
+                body: commentBody
               });
 
               await github.rest.issues.update({
