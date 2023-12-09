@@ -22,8 +22,8 @@ jobs:
           title = os.getenv("INPUT_PULL_REQUEST_TITLE")
 
           if not re.match(pattern, title):
-              echo "::set-output name=status::failure"
-              echo "::set-output name=error_message::Pull request title must start with 'PR-' followed by a number."
+              echo "Error: Pull request title must start with 'PR-' followed by a number." >&2
+              echo "status=failure" >> $GITHUB_ENV
               exit(0) # Exit successfully to prevent the workflow from failing
           EOF
         env:
@@ -42,6 +42,6 @@ jobs:
               sha: context.sha,
               state: 'failure',
               context: 'Lint PR Title',
-              description: context.payload.pull_request.title,
+              description: 'Pull request title does not match the required format.',
               target_url: '',
             });
