@@ -29,12 +29,12 @@ jobs:
           issue_data = response.json()
           issue_title = issue_data["title"]
 
-          if not re.match(pattern, title)":
+          if not re.match(pattern, title):
               print("::error::Pull request title must match conventional commits.")
               exit(1)
           elif title != issue_title:
               print(f"::error::Pull request title '{title}' does not match the associated issue title '{issue_title}'.")
-              exit(1)
+              exit(2)
           EOF
         env:
           INPUT_PULL_REQUEST_TITLE: ${{ github.event.pull_request.title }}
