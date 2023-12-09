@@ -43,8 +43,6 @@ jobs:
             echo "No commits found on the branch."
             echo "HAS_COMMITS=false" >> $GITHUB_ENV
           fi
-          env:
-            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
