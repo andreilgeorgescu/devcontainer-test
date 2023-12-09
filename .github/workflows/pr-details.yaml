@@ -1,21 +1,25 @@
-name: Pull Request Details
+name: Fetch Linked Issue Info
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize, edited]
+    types: [opened, edited, reopened, edited]
 
 jobs:
-  print-pr-details:
+  fetch-linked-issue:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Print PR details
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get Linked Issue Number
+        id: get-issue-number
         run: |
-          curl \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }} | jq
+          ISSUE_NUMBER=$(echo '${{ github.event.pull_request.body }}' | grep -oP '(?<=Resolves #)\d+')
+          echo "::set-output name=ISSUE_NUMBER::$ISSUE_NUMBER"
+
+      - name: Fetch Issue Details
+        if: steps.get-issue-number.outputs.ISSUE_NUMBER != ''
+        run: |
+          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+               -H "Accept: application/vnd.github.v3+json" \
+               https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.get-issue-number.outputs.ISSUE_NUMBER }}
