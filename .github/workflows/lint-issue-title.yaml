@@ -1,0 +1,45 @@
+name: Lint Issue Title
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions: read-all
+
+jobs:
+  manage-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Open or Close Issue Based on Title
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = context.payload.issue.title;
+            const issueState = context.payload.issue.state;
+            const compliantTitleRegex = /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9-]+\))?:\s[a-z0-9\s-]+[^\.]$/;
+            const isTitleCompliant = compliantTitleRegex.test(title);
+
+            if (isTitleCompliant && issueState === 'closed') {
+              // Reopen the issue if the title is now compliant
+              github.issues.update({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open'
+              });
+            } else if (!isTitleCompliant && issueState === 'open') {
+              // Close the issue if the title is non-compliant
+              github.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: '⚠️ This issue has been closed due to a non-compliant title. Please update the title to comply with our standards (Conventional Commits, all lowercase) and the issue will be reopened.'
+              });
+
+              github.issues.update({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'closed'
+              });
+            }
