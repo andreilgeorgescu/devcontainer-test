@@ -21,7 +21,7 @@ jobs:
         run: |
           pr_exists=$(gh pr list --head "${GITHUB_REF#refs/heads/}" --json number --jq ".[0].number")
           if [ -n "$pr_exists" ]; then
-            print "Pull Request already exists for this branch."
+            echo "Pull Request already exists for this branch."
             echo "PR_EXISTS=true" >> $GITHUB_ENV
           else
             echo "PR_EXISTS=false" >> $GITHUB_ENV
