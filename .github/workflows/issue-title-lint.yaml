@@ -9,6 +9,10 @@ permissions: read-all
 jobs:
   lint-pr-title:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: read
     steps:
       - name: Lint Pull Request Title
         uses: actions/github-script@v7
