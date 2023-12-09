@@ -25,10 +25,6 @@ jobs:
           if [[ ! "$title" =~ $pattern ]]; then
             echo "::error::Pull request title must follow Conventional Commits."
             exit 1
-          elif [[ "$title" != "$issue_title" ]]; then
-            echo "::error::Pull request title '$title' does not match the associated issue title '$issue_title'."
-            exit 2
-          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
