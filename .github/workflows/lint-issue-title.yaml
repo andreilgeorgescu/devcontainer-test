@@ -22,10 +22,15 @@ jobs:
             const isTitleCompliant = compliantTitleRegex.test(title);
 
             const commentBody = `
-              ⚠️ This issue has been closed due to a non-compliant title.
+              #⚠️ Issue Title Format Error
+              This issue has been closed due to a non-compliant title.
 
-              Please update the title to comply with [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). The issue title should start with one of the following types:
+              Please update the title to comply with [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+              # Format
+              `<type>(<scope>): <subject>`
+
+              # Type
               \`feat\`: A new feature
               \`fix\`: A bug fix
               \`docs\`: Documentation only changes
@@ -37,6 +42,12 @@ jobs:
               \`ci\`: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
               \`chore\`: Other changes that don't modify src or test files
               \`revert\`: Reverts a previous commit
+
+              # Scope
+              Additional contextual information
+
+              # Subject
+              Concise description of the changes; all words are lowercase and there is no period at the end.
             `;
 
             if (isTitleCompliant && issueState === 'closed') {
