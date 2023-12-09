@@ -17,29 +17,25 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check for Existing Pull Request
-        id: check-pr
         run: |
           pr_exists=$(gh pr list --head "${GITHUB_REF#refs/heads/}" --json number --jq ".[0].number")
           if [ -n "$pr_exists" ]; then
             echo "Pull Request already exists for this branch."
-            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "PR_EXISTS=true" >> $GITHUB_ENV
           else
-            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "PR_EXISTS=false" >> $GITHUB_ENV
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract Commit Details
-        if: steps.check-pr.outputs.exists == 'false'
+      - name: Extract Commit Details and Create Pull Request
         run: |
-          commit_subject=$(git log -1 --pretty=format:%s)
-          commit_footer=$(git log -1 --pretty=format:%b | tail -1)
-          echo "commit_subject=$commit_subject" >> $GITHUB_ENV
-          echo "commit_footer=$commit_footer" >> $GITHUB_ENV
-
-      - name: Create Pull Request
-        if: steps.check-pr.outputs.exists == 'false'
-        run: |
-          gh pr create --title "$commit_subject" --body "$commit_footer"
+          if [ "$PR_EXISTS" == "false" ]; then
+            commit_subject=$(git log -1 --pretty=format:%s)
+            commit_footer=$(git log -1 --pretty=format:%b | tail -1)
+            gh pr create --title "$commit_subject" --body "$commit_footer"
+          else
+            echo "Skipping pull request creation as one already exists."
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
