@@ -4,15 +4,13 @@ on:
     types:
       - opened
       - synchronize
-      - reopened
-      - edited
-      # - ready_for_review
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - name: Check PR Title
+        id: lint-title
         run: |
           python - <<EOF
           import re
@@ -22,8 +20,22 @@ jobs:
           title = os.getenv("INPUT_PULL_REQUEST_TITLE")
 
           if not re.match(pattern, title):
-              print("error: Pull request title must start with 'PR-' followed by a number.")
+              print("::error::Pull request title must start with 'PR-' followed by a number.")
               exit(1)
           EOF
         env:
           INPUT_PULL_REQUEST_TITLE: ${{ github.event.pull_request.title }}
+
+      - name: Set Status Check
+        if: failure()
+        run: |
+          curl -X POST "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -d "{
+              \"state\": \"failure\",
+              \"context\": \"Lint PR Title\",
+              \"description\": \"Pull request title does not match the required format.\",
+              \"target_url\": \"\",
+              \"environment\": \"production\"
+            }"
