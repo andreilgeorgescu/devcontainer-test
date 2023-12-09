@@ -18,6 +18,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check for Existing Pull Request
+        id: check-pr
         run: |
           pr_exists=$(gh pr list --head "${GITHUB_REF#refs/heads/}" --json number --jq ".[0].number")
           if [ -n "$pr_exists" ]; then
@@ -29,14 +30,23 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract Commit Details and Create Pull Request
+      - name: Check for Commits on the Branch
+        id: check-commits
         run: |
-          if [ "$PR_EXISTS" == "false" ]; then
-            commit_subject=$(git log -1 --pretty=format:%s)
-            commit_footer=$(git log -1 --pretty=format:%b | tail -1)
-            gh pr create --title "$commit_subject" --body "$commit_footer"
+          commit_count=$(git rev-list --count HEAD..${GITHUB_REF})
+          if [ "$commit_count" -gt "0" ]; then
+            echo "Commits found on the branch."
+            echo "HAS_COMMITS=true" >> $GITHUB_ENV
           else
-            echo "Skipping pull request creation as one already exists."
+            echo "No commits found on the branch."
+            echo "HAS_COMMITS=false" >> $GITHUB_ENV
           fi
+
+      - name: Extract Commit Details and Create Pull Request
+        if: steps.check-pr.outputs.pr_exists == 'false' && steps.check-commits.outputs.has_commits == 'true'
+        run: |
+          commit_subject=$(git log -1 --pretty=format:%s)
+          commit_footer=$(git log -1 --pretty=format:%b | tail -1)
+          gh pr create --title "$commit_subject" --body "$commit_footer"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
