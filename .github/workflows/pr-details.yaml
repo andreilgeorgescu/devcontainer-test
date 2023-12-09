@@ -2,15 +2,17 @@ name: Compare PR and Issue Titles
 
 on:
   pull_request:
-    types: [opened, edited, reopened]
+    types:
+      - edited
+      - opened
+      - reopened
+
+permissions: read-all
 
 jobs:
   compare-titles:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Get PR Title
         id: get-pr-title
         run: echo "::set-output name=PR_TITLE::${{ github.event.pull_request.title }}"
