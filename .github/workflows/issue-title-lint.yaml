@@ -22,15 +22,17 @@ jobs:
             const isTitleCompliant = compliantTitleRegex.test(title);
 
             const commentBody = `
-              #⚠️ Issue Title Format Error
+              # :warning: Issue Title Format Error
               This issue has been closed due to a non-compliant title.
 
               Please update the title to comply with [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
-              # Format
+              ## Format
               \`<type>(<scope>): <subject>\`
 
-              # Type
+              It is entirely lowercase.
+
+              ## Type
               \`feat\`: A new feature
               \`fix\`: A bug fix
               \`docs\`: Documentation only changes
@@ -43,11 +45,11 @@ jobs:
               \`chore\`: Other changes that don't modify src or test files
               \`revert\`: Reverts a previous commit
 
-              # Scope
-              Additional contextual information
+              ## Scope
+              Additional contextual information.
 
-              # Subject
-              Concise description of the changes; all words are lowercase and there is no period at the end.
+              ## Subject
+              Concise description of the changes. There is no punctuation at the end.
             `;
 
             if (isTitleCompliant && issueState === 'closed') {
