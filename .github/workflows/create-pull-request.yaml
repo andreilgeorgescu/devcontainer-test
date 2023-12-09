@@ -22,15 +22,15 @@ jobs:
           pr_exists=$(gh pr list --head "${GITHUB_REF#refs/heads/}" --json number --jq ".[0].number")
           if [ -n "$pr_exists" ]; then
             echo "Pull Request already exists for this branch."
-            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "exists=true" >> $GITHUB_ENV
           else
-            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "exists=false" >> $GITHUB_ENV
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract Commit Details
-        if: env.pr_exists == 'false'
+        if: steps.check-pr.outputs.exists == 'false'
         run: |
           commit_subject=$(git log -1 --pretty=format:%s)
           commit_footer=$(git log -1 --pretty=format:%b | tail -1)
@@ -38,7 +38,7 @@ jobs:
           echo "commit_footer=$commit_footer" >> $GITHUB_ENV
 
       - name: Create Pull Request
-        if: env.pr_exists == 'false'
+        if: steps.check-pr.outputs.exists == 'false'
         run: |
           gh pr create --title "$commit_subject" --body "$commit_footer"
         env:
