@@ -1,21 +1,25 @@
-name: Pull Request Details
+name: Pull Request Link Relations with CLI
 
 on:
   pull_request:
     types: [opened, reopened, synchronize, edited]
 
 jobs:
-  print-pr-details:
+  get-pr-link-relations:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - name: Print PR details
+      - name: Install GitHub CLI and jq
+        run: |
+          sudo apt update
+          sudo apt install -y gh jq
+
+      - name: Fetch and Print Link Relations
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }} | jq
+          PR_DETAILS=$(gh api -H "Accept: application/vnd.github.v3+json" /repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }})
+          echo "Link Relations:"
+          echo $PR_DETAILS | jq '._links'
