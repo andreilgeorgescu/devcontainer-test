@@ -14,29 +14,20 @@ jobs:
     steps:
       - name: Check PR Title and Associated Issue Title
         run: |
-          python - <<EOF
-          import re
-          import os
-          import requests
+          pattern="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9-]+\))?:\s[a-z0-9\s-]+[a-z0-9\s]$"
+          title="${{ github.event.pull_request.title }}"
+          pr_number="${{ github.event.pull_request.number }}"
+          repo="${{ github.repository }}"
+          api_url="${{ github.api_url }}"
 
-          pattern = r'^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9-]+\))?:\s[a-z0-9\s-]+[a-z0-9\s]$'
-          title = os.getenv("INPUT_PULL_REQUEST_TITLE")
+          issue_title=$(gh issue view $pr_number --json title -R $repo --jq '.title')
 
-          # Get the associated issue number
-          issue_url = os.getenv("GITHUB_API_URL") + "/repos/" + os.getenv("GITHUB_REPOSITORY") + "/pulls/" + os.getenv("GITHUB_PR_NUMBER") + "/issue"
-          response = requests.get(issue_url, headers={"Authorization": "token " + os.getenv("GITHUB_TOKEN")})
-          issue_data = response.json()
-          issue_title = issue_data["title"]
-
-          if not re.match(pattern, title):
-              print("::error::Pull request title must match conventional commits.")
-              exit(1)
-          elif title != issue_title:
-              print(f"::error::Pull request title '{title}' does not match the associated issue title '{issue_title}'.")
-              exit(2)
-          EOF
+          if [[ ! "$title" =~ $pattern ]]; then
+            echo "::error::Pull request title must follow Conventional Commits."
+            exit 1
+          elif [[ "$title" != "$issue_title" ]]; then
+            echo "::error::Pull request title '$title' does not match the associated issue title '$issue_title'."
+            exit 2
+          fi
         env:
-          INPUT_PULL_REQUEST_TITLE: ${{ github.event.pull_request.title }}
-          GITHUB_API_URL: ${{ github.api_url }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
