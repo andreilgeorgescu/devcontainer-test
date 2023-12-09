@@ -1,0 +1,38 @@
+name: Create Pull Request on Specific Branch Pattern
+
+on:
+  push:
+    branches:
+      - "**/issue*"
+
+permissions: read-all
+
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Check for Existing Pull Request
+        id: check-pr
+        run: |
+          pr_exists=$(gh pr list --head "${GITHUB_REF#refs/heads/}" --json number --jq ".[0].number")
+          if [ -n "$pr_exists" ]; then
+            echo "Pull Request already exists for this branch."
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Extract Commit Details
+        if: env.pr_exists == 'false'
+        run: |
+          commit_subject=$(git log -1 --pretty=format:%s)
+          commit_footer=$(git log -1 --pretty=format:%b | tail -1)
+          echo "commit_subject=$commit_subject" >> $GITHUB_ENV
+          echo "commit_footer=$commit_footer" >> $GITHUB_ENV
+
+      - name: Create Pull Request
+        if: env.pr_exists == 'false'
+        run: |
+          gh pr create --title "$commit_subject" --body "$commit_footer"
