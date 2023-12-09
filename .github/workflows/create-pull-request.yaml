@@ -35,7 +35,7 @@ jobs:
         run: |
           repo_info=$(gh repo view)
           default_branch=$(echo "$repo_info" | jq -r '.defaultBranchRef.name')
-          commit_count=$(gh pr list --base "$default_branch" --head "${GITHUB_REF#refs/heads/}" --json number --jq '. | length')
+          commit_count=$(gh pr list --base "$default_branch" --head "${GITHUB_REF#refs/heads/}" --json number | jq '. | length')
           if [ "$commit_count" -gt "0" ]; then
             echo "Commits found on the branch."
             echo "HAS_COMMITS=true" >> $GITHUB_ENV
@@ -43,6 +43,8 @@ jobs:
             echo "No commits found on the branch."
             echo "HAS_COMMITS=false" >> $GITHUB_ENV
           fi
+          env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
