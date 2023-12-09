@@ -1,78 +1,60 @@
-name: Lint Issue Title
+name: Lint Pull Request Title
 
 on:
-  issues:
-    types: [opened, edited]
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
 
 permissions: read-all
 
 jobs:
-  manage-issue:
+  lint-pr-title:
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
     steps:
-      - name: Open or Close Issue Based on Title
+      - name: Lint Pull Request Title
         uses: actions/github-script@v7
         with:
           script: |
-            const title = context.payload.issue.title;
-            const issueState = context.payload.issue.state;
-            const compliantTitleRegex = /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9-]+\))?:\s[a-z0-9\s-]+[a-z0-9\s]$/;
-            const isTitleCompliant = compliantTitleRegex.test(title);
+            const prNumber = context.payload.pull_request.number;
+            const prTitle = context.payload.pull_request.title;
+            const repo = context.repo.repo;
+            const owner = context.repo.owner;
+            const issueNumberRegex = /Resolves #(\d+)/;
+            const compliantTitleRegex = /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9-]+\))?:\s[a-z0-9\s-]+[a-z0-9\s]\n\nResolves #\d+$/;
 
-            const commentBody = `
-              # :warning: Issue Title Format Error
-              This issue has been closed due to a non-compliant title.
+            const isTitleCompliant = compliantTitleRegex.test(prTitle);
+            const issueMatch = prTitle.match(issueNumberRegex);
+            const linkedIssueNumber = issueMatch ? parseInt(issueMatch[1], 10) : null;
 
-              Please update the title to comply with [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+            let conclusion = 'success';
+            let summary = 'Pull request title is compliant and linked to an issue with a matching title.';
 
-              ## Format
-              \`<type>(<scope>): <subject>\`
-
-              It is entirely lowercase.
-
-              ## Type
-              \`feat\`: A new feature
-              \`fix\`: A bug fix
-              \`docs\`: Documentation only changes
-              \`style\`: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
-              \`refactor\`: A code change that neither fixes a bug nor adds a feature
-              \`perf\`: A code change that improves performance
-              \`test\`: Adding missing tests or correcting existing tests
-              \`build\`: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
-              \`ci\`: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
-              \`chore\`: Other changes that don't modify src or test files
-              \`revert\`: Reverts a previous commit
-
-              ## Scope
-              Additional contextual information.
-
-              ## Subject
-              Concise description of the changes. There is no punctuation at the end.
-            `;
-
-            if (isTitleCompliant && issueState === 'closed') {
-              // Reopen the issue if the title is now compliant
-              await github.rest.issues.update({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                state: 'open'
-              });
-            } else if (!isTitleCompliant && issueState === 'open') {
-              // Close the issue if the title is non-compliant
-              await github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: commentBody
+            if (!isTitleCompliant || !linkedIssueNumber) {
+              conclusion = 'failure';
+              summary = 'Pull request title is non-compliant or not linked to an issue.';
+            } else {
+              const { data: linkedIssue } = await github.rest.issues.get({
+                owner,
+                repo,
+                issue_number: linkedIssueNumber,
               });
 
-              await github.rest.issues.update({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                state: 'closed'
-              });
+              if (linkedIssue.title !== prTitle.split('\n')[0]) {
+                conclusion = 'failure';
+                summary = 'Pull request title does not match the linked issue title.';
+              }
             }
+
+            // Create or update a check run
+            await github.rest.checks.create({
+              owner,
+              repo,
+              name: 'Lint Pull Request Title',
+              head_sha: context.payload.pull_request.head.sha,
+              status: 'completed',
+              conclusion: conclusion,
+              output: {
+                title: 'Lint Result',
+                summary: summary,
+              },
+              pull_request: prNumber
+            });
