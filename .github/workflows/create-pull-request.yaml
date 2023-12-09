@@ -23,6 +23,8 @@ jobs:
           else
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract Commit Details
         if: env.pr_exists == 'false'
@@ -36,3 +38,5 @@ jobs:
         if: env.pr_exists == 'false'
         run: |
           gh pr create --title "$commit_subject" --body "$commit_footer"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
