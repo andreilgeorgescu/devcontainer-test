@@ -33,7 +33,7 @@ jobs:
       - name: Check for Commits on the Branch
         id: check-commits
         run: |
-          commit_count=$(git rev-list --count HEAD..${GITHUB_REF})
+          commit_count=$(git rev-list --count ${GITHUB_REF}..origin/${{ github.event.repository.default_branch }})
           if [ "$commit_count" -gt "0" ]; then
             echo "Commits found on the branch."
             echo "HAS_COMMITS=true" >> $GITHUB_ENV
