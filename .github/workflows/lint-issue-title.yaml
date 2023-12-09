@@ -22,7 +22,9 @@ jobs:
             const isTitleCompliant = compliantTitleRegex.test(title);
 
             const commentBody = `
-              ⚠️ This issue has been closed due to a non-compliant title. Please update the title to comply with our standards. The issue title should start with one of the following types:
+              ⚠️ This issue has been closed due to a non-compliant title.
+
+              Please update the title to comply with [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). The issue title should start with one of the following types:
 
               \`feat\`: A new feature
               \`fix\`: A bug fix
@@ -35,8 +37,6 @@ jobs:
               \`ci\`: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
               \`chore\`: Other changes that don't modify src or test files
               \`revert\`: Reverts a previous commit
-
-              For more information on Conventional Commits, please visit [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
             `;
 
             if (isTitleCompliant && issueState === 'closed') {
