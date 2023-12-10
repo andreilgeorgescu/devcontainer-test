@@ -14,9 +14,12 @@ jobs:
       contents: write
       pull-requests: write
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Create pull request if conditions are met
         uses: actions/github-script@v7
         with:
           script: |
-            const script = require('.github/scripts/create-pr.js');
+            const script = require('../scripts/create-pr.js');
             await script({ github, context });
