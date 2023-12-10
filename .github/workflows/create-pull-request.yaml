@@ -1,52 +1,52 @@
-name: Create Pull Request on Specific Branch Pattern
+# name: Create Pull Request on Specific Branch Pattern
 
-on:
-  push:
-    branches:
-      - "**/issue*"
+# on:
+#   push:
+#     branches:
+#       - "**/issue*"
 
-permissions: read-all
+# permissions: read-all
 
-jobs:
-  create-pull-request:
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      contents: write
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
+# jobs:
+#   create-pull-request:
+#     runs-on: ubuntu-latest
+#     permissions:
+#       contents: write
+#       pull-requests: write
+#     steps:
+#       - name: Checkout Repo
+#         uses: actions/checkout@v4
 
-      - name: Check for Existing Pull Request
-        run: |
-          pr_exists=$(gh pr list --head "${GITHUB_REF#refs/heads/}" --json number --jq ".[0].number")
-          if [ -n "$pr_exists" ]; then
-            echo "Pull Request already exists for this branch."
-            echo "PR_EXISTS=true" >> $GITHUB_ENV
-          else
-            echo "PR_EXISTS=false" >> $GITHUB_ENV
-          fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       - name: Check for Existing Pull Request
+#         run: |
+#           pr_exists=$(gh pr list --head "${GITHUB_REF#refs/heads/}" --json number --jq ".[0].number")
+#           if [ -n "$pr_exists" ]; then
+#             echo "Pull Request already exists for this branch."
+#             echo "PR_EXISTS=true" >> $GITHUB_ENV
+#           else
+#             echo "PR_EXISTS=false" >> $GITHUB_ENV
+#           fi
+#         env:
+#           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Check for Commits
-      #   id: check-commits
-      #   run: |
-      #     commit_count=$(git rev-list --count HEAD)
-      #     if [ "$commit_count" -gt 0 ]; then
-      #       echo "COMMIT_COUNT=$commit_count" >> $GITHUB_ENV
-      #     else
-      #       echo "COMMIT_COUNT=0" >> $GITHUB_ENV
-      #     fi
+#       # - name: Check for Commits
+#       #   id: check-commits
+#       #   run: |
+#       #     commit_count=$(git rev-list --count HEAD)
+#       #     if [ "$commit_count" -gt 0 ]; then
+#       #       echo "COMMIT_COUNT=$commit_count" >> $GITHUB_ENV
+#       #     else
+#       #       echo "COMMIT_COUNT=0" >> $GITHUB_ENV
+#       #     fi
 
-      - name: Extract Commit Details and Create Pull Request
-        run: |
-          if [ "$PR_EXISTS" == "false" ]; then
-            commit_subject=$(git log -1 --pretty=format:%s)
-            commit_footer=$(git log -1 --pretty=format:%b | tail -1)
-            gh pr create --title "$commit_subject" --body "$commit_footer"
-          else
-            echo "Skipping pull request creation as one already exists or there are no commits."
-          fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       - name: Extract Commit Details and Create Pull Request
+#         run: |
+#           if [ "$PR_EXISTS" == "false" ]; then
+#             commit_subject=$(git log -1 --pretty=format:%s)
+#             commit_footer=$(git log -1 --pretty=format:%b | tail -1)
+#             gh pr create --title "$commit_subject" --body "$commit_footer"
+#           else
+#             echo "Skipping pull request creation as one already exists or there are no commits."
+#           fi
+#         env:
+#           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

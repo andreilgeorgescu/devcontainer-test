@@ -1,0 +1,22 @@
+name: Auto Create Pull Request
+
+on:
+  push:
+    branches:
+      - "**/issue*"
+
+permissions: read-all
+
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Create pull request if conditions are met
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const script = require('../scripts/create-pr.js');
+            await script({ github, context });
