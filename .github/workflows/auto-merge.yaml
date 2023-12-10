@@ -1,38 +1,83 @@
-name: Enable Auto-Merge for PRs
+name: Enable Auto-Merge for PR
 
 on:
   pull_request:
     types: [opened, reopened]
 
-permissions: write-all
-
 jobs:
   enable-auto-merge:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install @actions/github graphql-request
+
       - name: Enable Auto-Merge on PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PR_NUMBER=${{ github.event.pull_request.number }}
-          QUERY_PR_ID=$(cat <<EOF
-            query {
-              repository(owner: "${{ github.repository_owner }}", name: "${{ github.event.repository.name }}") {
+          const { request } = require('@actions/github');
+          const { GraphQLClient, gql } = require('graphql-request');
+
+          const query = gql`
+            query FindPullRequestId($OWNER_NAME: String!, $REPO_NAME: String!, $PR_NUMBER: Int!) {
+              repository(owner: $OWNER_NAME, name: $REPO_NAME) {
                 pullRequest(number: $PR_NUMBER) {
                   id
                 }
               }
             }
-          EOF
-          )
-          PR_ID=$(echo "$QUERY_PR_ID" | gh api graphql --input - -q '.data.repository.pullRequest.id')
+          `;
 
-          ENABLE_AUTOMERGE_MUTATION=$(cat <<EOF
-            mutation {
-              enablePullRequestAutoMerge(input: {pullRequestId: "$PR_ID", mergeMethod: SQUASH}) {
-                clientMutationId
+          const variables = {
+            OWNER_NAME: 'andreilgeorgescu',
+            REPO_NAME: 'devcontainer-base',
+            PR_NUMBER: 29,
+          };
+
+          const response = await request('POST /graphql', {
+            headers: {
+              authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+            },
+            query,
+            variables,
+          });
+
+          const pullRequestId = response.data.repository.pullRequest.id;
+
+          const mutation = gql`
+            mutation EnableAutoMerge($PULL_REQUEST_ID: ID!) {
+              enablePullRequestAutoMerge(input: {
+                pullRequestId: $PULL_REQUEST_ID,
+                mergeMethod: SQUASH
+              }) {
+                pullRequest {
+                  number
+                  title
+                  autoMergeRequest {
+                    enabledAt
+                    mergeMethod
+                  }
+                }
               }
             }
-          EOF
-          )
-          gh api graphql --input - -f query="$ENABLE_AUTOMERGE_MUTATION"
+          `;
+
+          const mutationResponse = await request('POST /graphql', {
+            headers: {
+              authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+            },
+            query: mutation,
+            variables: {
+              PULL_REQUEST_ID: pullRequestId,
+            },
+          });
+
+          console.log(mutationResponse.data);
