@@ -5,9 +5,13 @@ on:
     types: [opened, reopened]
   workflow_dispatch: {}
 
+permissions: read-all
+
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - name: Enable Auto Merge
         uses: actions/github-script@v7
