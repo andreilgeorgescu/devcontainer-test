@@ -1,4 +1,4 @@
-export default async ({ github, context }) => {
+module.exports = async ({ github, context }) => {
   const HEAD_BRANCH = context.ref.replace("refs/heads/", "");
   const OWNER_NAME = context.repo.owner;
   const REPO_NAME = context.repo.repo;
