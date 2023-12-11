@@ -11,8 +11,6 @@ module.exports = async ({ github, context }) => {
         pullRequest(number: $PR_NUMBER) {
           id
         }
-      } {
-        clientMutationId
       }
     }`;
 
@@ -28,7 +26,9 @@ module.exports = async ({ github, context }) => {
       enablePullRequestAutoMerge(input: {
         mergeMethod: SQUASH,
         pullRequestId: $PULL_REQUEST_ID,
-      })
+      }) {
+        clientMutationId
+      }
     }`;
 
   await github.graphql(mutation, {
