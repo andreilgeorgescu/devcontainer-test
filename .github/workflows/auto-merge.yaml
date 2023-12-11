@@ -1,25 +1,30 @@
 name: Enable Auto Merge on Pull Request
 
 on:
-  pull_request:
-    types:
-      - opened
+  pull_request_review:
+    types: [submitted]
 
 permissions: read-all
 
 jobs:
-  auto-merge:
+  approved:
+    if: github.event.review.state == 'APPROVED' || github.event.review.state == null
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - run: echo "This PR was approved"
+# jobs:
+#   auto-merge:
+#     runs-on: ubuntu-latest
+#     permissions:
+#       contents: write
+#       pull-requests: write
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
 
-      - name: Enable Auto Merge
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const script = require('./.github/scripts/auto-merge.js');
-            await script({ github, context });
+#       - name: Enable Auto Merge
+#         uses: actions/github-script@v7
+#         with:
+#           script: |
+#             const script = require('./.github/scripts/auto-merge.js');
+#             await script({ github, context });
