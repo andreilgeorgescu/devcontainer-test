@@ -1,7 +1,6 @@
 name: Validate code in the merge queue
 
-on:
-  merge_group: {}
+on: merge_group
 
 permissions: read-all
 
