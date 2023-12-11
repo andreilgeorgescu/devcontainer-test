@@ -1,12 +1,13 @@
 name: Validate code in the merge queue
 
 on:
-  merge_group: {}
+  pull_request_review:
+    types: [submitted]
 
 permissions: read-all
 
 jobs:
-  validate-pr:
+  validate-merge:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
