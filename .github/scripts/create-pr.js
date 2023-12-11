@@ -6,7 +6,7 @@ module.exports = async ({ github, context }) => {
   };
 
   const query = `
-    query GetPullRequestCommitCount($OWNER_NAME: String!, $REPO_NAME: String!, $HEAD_BRANCH: String!) {
+    query Query($OWNER_NAME: String!, $REPO_NAME: String!, $HEAD_BRANCH: String!) {
       repository(owner: $OWNER_NAME, name: $REPO_NAME) {
         defaultBranchRef {
           compare(headRef: $HEAD_BRANCH) {
@@ -46,7 +46,7 @@ module.exports = async ({ github, context }) => {
 
   if (variables.PR_COUNT === 0 && variables.COMMITS_COUNT >= 1) {
     const mutation = `
-    mutation CreatePR($BASE_BRANCH: String!, $HEAD_BRANCH: String!, $PR_BODY: String, $PR_TITLE: String!, $REPO_ID: ID!) {
+    mutation Mutation($BASE_BRANCH: String!, $HEAD_BRANCH: String!, $PR_BODY: String, $PR_TITLE: String!, $REPO_ID: ID!) {
       createPullRequest(input: {
         baseRefName: $BASE_BRANCH,
         body: $PR_BODY,

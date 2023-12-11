@@ -1,12 +1,12 @@
 module.exports = async ({ github, context }) => {
   const constants = {
     OWNER_NAME: context.repo.owner,
-    REPO_NAME: context.repo.repo,
     PR_NUMBER: context.issue.number,
+    REPO_NAME: context.repo.repo,
   };
 
   const query = `
-    query FindPullRequestId($OWNER_NAME: String!, $PR_NUMBER: Int!, $REPO_NAME: String!) {
+    query Query($OWNER_NAME: String!, $PR_NUMBER: Int!, $REPO_NAME: String!) {
       repository(owner: $OWNER_NAME, name: $REPO_NAME) {
         pullRequest(number: $PR_NUMBER) {
           id
@@ -22,7 +22,7 @@ module.exports = async ({ github, context }) => {
   };
 
   const mutation = `
-    mutation EnableAutoMerge($PULL_REQUEST_ID: ID!) {
+    mutation Mutation($PULL_REQUEST_ID: ID!) {
       enablePullRequestAutoMerge(input: {
         mergeMethod: SQUASH,
         pullRequestId: $PULL_REQUEST_ID,

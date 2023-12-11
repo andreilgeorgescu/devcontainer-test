@@ -1,23 +1,27 @@
-name: Validate code in the merge queue
+name: Random Failure Workflow
 
 on:
-  pull_request_review:
-    types: [submitted]
+  pull_request:
+    types:
+      - labeled
 
 permissions: read-all
 
 jobs:
-  validate-merge:
-    if: github.event.review.state == 'APPROVED' || github.event.review.state == null
+  random_failure_job:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Display info
+    if: ${{ github.event.label.name == 'ready-to-test' }}
+    steps:
+      - name: Set random number
+        id: random_number
+        run: echo "random_number=$(shuf -i 1-10 -n 1)" >> $GITHUB_ENV
+
+      - name: Random Failure
         run: |
-          pwd
-          tree -a -I '.git'
-          git status
-      - name: Run slow CI (emulated by a long sleep)
-        run: sleep 300
+          if [[ ${{ steps.random_number.outputs.random_number }} -le 5 ]]; then
+            echo "Random failure occurred!"
+            exit 1
+          else
+            echo "Random success!"
+          fi

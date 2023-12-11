@@ -1,0 +1,30 @@
+name: Validate code in the merge queue
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+  pull_request_review:
+    types:
+      - submitted
+
+permissions: read-all
+
+jobs:
+  validate-merge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate code in the merge queue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.CREATE_PULL_REQUEST }}
+          script: |
+            const script = require('./.github/scripts/check-ready.js');
+            await script({ github, context });
