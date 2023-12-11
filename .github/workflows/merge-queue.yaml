@@ -13,15 +13,4 @@ jobs:
 
     if: ${{ github.event.label.name == 'ready-to-test' }}
     steps:
-      - name: Set random number
-        id: random_number
-        run: echo "random_number=$(shuf -i 1-10 -n 1)" >> $GITHUB_ENV
-
-      - name: Random Failure
-        run: |
-          if [[ ${{ steps.random_number.outputs.random_number }} -le 5 ]]; then
-            echo "Random failure occurred!"
-            exit 1
-          else
-            echo "Random success!"
-          fi
+      - run: echo "test"
