@@ -6,11 +6,13 @@ module.exports = async ({ github, context }) => {
   };
 
   const query = `
-    query FindPullRequestId($OWNER_NAME: String!, $REPO_NAME: String!, $PR_NUMBER: Int!) {
+    query FindPullRequestId($OWNER_NAME: String!, $PR_NUMBER: Int!, $REPO_NAME: String!) {
       repository(owner: $OWNER_NAME, name: $REPO_NAME) {
         pullRequest(number: $PR_NUMBER) {
           id
         }
+      }) {
+        clientMutationId
       }
     }`;
 
