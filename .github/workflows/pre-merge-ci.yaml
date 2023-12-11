@@ -1,0 +1,19 @@
+name: Pre-Merge CI
+
+on:
+  issue_comment:
+    types:
+      - created
+
+permissions: read-all
+
+jobs:
+  random_failure_job:
+    if: ${{ github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Echo Comment Body
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: echo $COMMENT_BODY

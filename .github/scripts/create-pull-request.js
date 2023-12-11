@@ -46,17 +46,17 @@ module.exports = async ({ github, context }) => {
 
   if (variables.PR_COUNT === 0 && variables.COMMITS_COUNT >= 1) {
     const mutation = `
-    mutation Mutation($BASE_BRANCH: String!, $HEAD_BRANCH: String!, $PR_BODY: String, $PR_TITLE: String!, $REPO_ID: ID!) {
-      createPullRequest(input: {
-        baseRefName: $BASE_BRANCH,
-        body: $PR_BODY,
-        headRefName: $HEAD_BRANCH,
-        repositoryId: $REPO_ID,
-        title: $PR_TITLE,
-      }) {
-        clientMutationId
-      }
-    }`;
+      mutation Mutation($BASE_BRANCH: String!, $HEAD_BRANCH: String!, $PR_BODY: String, $PR_TITLE: String!, $REPO_ID: ID!) {
+        createPullRequest(input: {
+          baseRefName: $BASE_BRANCH,
+          body: $PR_BODY,
+          headRefName: $HEAD_BRANCH,
+          repositoryId: $REPO_ID,
+          title: $PR_TITLE,
+        }) {
+          clientMutationId
+        }
+      }`;
 
     await github.graphql(mutation, {
       BASE_BRANCH: variables.BASE_BRANCH,

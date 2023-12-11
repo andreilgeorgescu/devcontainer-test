@@ -8,9 +8,6 @@ module.exports = async ({ github, context }) => {
   const query = `
     query Query($OWNER_NAME: String!, $PR_NUMBER: Int!, $REPO_NAME: String!) {
       repository(owner: $OWNER_NAME, name: $REPO_NAME) {
-        label(name: "ready-to-test") {
-          id
-        }
         pullRequest(number: $PR_NUMBER) {
           reviewDecision
           id
@@ -22,7 +19,6 @@ module.exports = async ({ github, context }) => {
 
   const variables = {
     ...constants,
-    LABEL_ID: queryResponse.repository.label.id,
     PULL_REQUEST_ID: queryResponse.repository.pullRequest.id,
     REVIEW_DECISION: queryResponse.repository.pullRequest.reviewDecision,
   };
@@ -32,24 +28,21 @@ module.exports = async ({ github, context }) => {
     variables.REVIEW_DECISION === null
   ) {
     const mutation = `
-  mutation Mutation($LABEL_ID: ID!, $PULL_REQUEST_ID: ID!) {
-    addLabelsToLabelable(input: {
-      labelableId: $PULL_REQUEST_ID,
-      labelIds: [$LABEL_ID]
-    }) {
-      clientMutationId
-      }
-  }`;
+      mutation Mutation($PULL_REQUEST_ID: ID!) {
+        addComment(input: {
+          body: "/merge",
+          subjectId: $PULL_REQUEST_ID,
+        }) {
+          clientMutationId
+          }
+      }`;
 
     await github.graphql(mutation, {
-      LABEL_ID: variables.LABEL_ID,
       PULL_REQUEST_ID: variables.PULL_REQUEST_ID,
     });
 
-    console.log("Pull request successfully labeled as ready-to-test.");
+    console.log("Pull request is ready to be merged");
   } else {
-    console.log(
-      "Pull request has already been approved or no review required.",
-    );
+    console.log("Pull request is not ready to be merged.");
   }
 };

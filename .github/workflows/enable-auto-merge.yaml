@@ -1,14 +1,14 @@
-name: Auto Create Pull Request
+name: Enable Auto-Merge
 
 on:
-  push:
-    branches:
-      - "**/issue*"
+  pull_request:
+    types:
+      - opened
 
 permissions: read-all
 
 jobs:
-  create-pull-request:
+  auto-merge:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -17,10 +17,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create pull request if conditions are met
+      - name: Enable Auto Merge
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.CREATE_PULL_REQUEST }}
           script: |
-            const script = require('./.github/scripts/create-pr.js');
+            const script = require('./.github/scripts/auto-merge.js');
             await script({ github, context });
