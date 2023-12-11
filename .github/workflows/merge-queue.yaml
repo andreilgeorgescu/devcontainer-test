@@ -1,17 +1,14 @@
 name: Validate code in the merge queue
 
 on:
-  pull_request: {}
   pull_request_review:
-    types:
-      - submitted
-      - dismissed
+    types: [submitted]
 
 permissions: read-all
 
 jobs:
   validate-merge:
-    if: github.event.review.state == 'APPROVED'
+    if: github.event.review.state == 'APPROVED' || github.event.review.state == null
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
