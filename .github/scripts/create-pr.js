@@ -44,8 +44,8 @@ module.exports = async ({ github, context }) => {
     REPO_ID: queryResponse.repository.id,
   };
 
-  // if (variables.PR_COUNT === 0 && variables.COMMITS_COUNT >= 1) {
-  const mutation = `
+  if (variables.PR_COUNT === 0 && variables.COMMITS_COUNT >= 1) {
+    const mutation = `
     mutation CreatePR($BASE_BRANCH: String!, $HEAD_BRANCH: String!, $PR_BODY: String, $PR_TITLE: String!, $REPO_ID: ID!) {
       createPullRequest(input: {
         baseRefName: $BASE_BRANCH,
@@ -58,14 +58,18 @@ module.exports = async ({ github, context }) => {
       }
     }`;
 
-  await github.graphql(mutation, {
-    BASE_BRANCH: variables.BASE_BRANCH,
-    HEAD_BRANCH: variables.HEAD_BRANCH,
-    PR_BODY: variables.PR_BODY,
-    PR_TITLE: variables.PR_TITLE,
-    REPO_ID: variables.REPO_ID,
-  });
+    await github.graphql(mutation, {
+      BASE_BRANCH: variables.BASE_BRANCH,
+      HEAD_BRANCH: variables.HEAD_BRANCH,
+      PR_BODY: variables.PR_BODY,
+      PR_TITLE: variables.PR_TITLE,
+      REPO_ID: variables.REPO_ID,
+    });
 
-  console.log("Pull request successfully created.");
-  // }
+    console.log("Pull request successfully created.");
+  } else {
+    console.log(
+      "Conditions for creating a pull request were not met. No pull request has been created.",
+    );
+  }
 };
