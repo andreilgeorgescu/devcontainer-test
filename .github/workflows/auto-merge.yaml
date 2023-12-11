@@ -19,37 +19,40 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const findPRQuery = `query FindPullRequestId($OWNER_NAME: String!, $REPO_NAME: String!, $PR_NUMBER: Int!) {
-              repository(owner: $OWNER_NAME, name: $REPO_NAME) {
-                pullRequest(number: $PR_NUMBER) {
-                  id
-                }
-              }
-            }`;
+            const script = require('./.github/scripts/auto-merge.js');
+            await script({ github, context });
+          # script: |
+          #   const findPRQuery = `query FindPullRequestId($OWNER_NAME: String!, $REPO_NAME: String!, $PR_NUMBER: Int!) {
+          #     repository(owner: $OWNER_NAME, name: $REPO_NAME) {
+          #       pullRequest(number: $PR_NUMBER) {
+          #         id
+          #       }
+          #     }
+          #   }`;
 
-            const variables = {
-              OWNER_NAME: context.repo.owner,
-              REPO_NAME: context.repo.repo,
-              PR_NUMBER: context.issue.number
-            };
+          #   const variables = {
+          #     OWNER_NAME: context.repo.owner,
+          #     REPO_NAME: context.repo.repo,
+          #     PR_NUMBER: context.issue.number
+          #   };
 
-            const prData = await github.graphql(findPRQuery, variables);
-            const pullRequestId = prData.repository.pullRequest.id;
+          #   const prData = await github.graphql(findPRQuery, variables);
+          #   const pullRequestId = prData.repository.pullRequest.id;
 
-            const enableAutoMergeMutation = `mutation EnableAutoMerge($PULL_REQUEST_ID: ID!) {
-              enablePullRequestAutoMerge(input: {
-                pullRequestId: $PULL_REQUEST_ID,
-                mergeMethod: SQUASH
-              }) {
-                pullRequest {
-                  number
-                  title
-                  autoMergeRequest {
-                    enabledAt
-                    mergeMethod
-                  }
-                }
-              }
-            }`;
+          #   const enableAutoMergeMutation = `mutation EnableAutoMerge($PULL_REQUEST_ID: ID!) {
+          #     enablePullRequestAutoMerge(input: {
+          #       pullRequestId: $PULL_REQUEST_ID,
+          #       mergeMethod: SQUASH
+          #     }) {
+          #       pullRequest {
+          #         number
+          #         title
+          #         autoMergeRequest {
+          #           enabledAt
+          #           mergeMethod
+          #         }
+          #       }
+          #     }
+          #   }`;
 
-            await github.graphql(enableAutoMergeMutation, { PULL_REQUEST_ID: pullRequestId });
+          #   await github.graphql(enableAutoMergeMutation, { PULL_REQUEST_ID: pullRequestId });

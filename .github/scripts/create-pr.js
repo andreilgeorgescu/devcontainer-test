@@ -60,8 +60,7 @@ module.exports = async ({ github, context }) => {
             bodyText
           }
         }
-      }
-    `;
+      }`;
 
     const mutationResult = await github.graphql(mutation, {
       BASE_BRANCH,
