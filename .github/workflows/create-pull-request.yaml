@@ -22,5 +22,5 @@ jobs:
         with:
           github-token: ${{ secrets.CREATE_PULL_REQUEST }}
           script: |
-            const script = require('./.github/scripts/create-pr.js');
+            const script = require('./.github/scripts/create-pull-request.js');
             await script({ github, context });
