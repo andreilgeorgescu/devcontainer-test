@@ -20,6 +20,7 @@ jobs:
       - name: Create pull request if conditions are met
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.CREATE_PULL_REQUEST }}
           script: |
             const script = require('./.github/scripts/create-pr.js');
             await script({ github, context });
