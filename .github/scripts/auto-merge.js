@@ -14,27 +14,23 @@ module.exports = async ({ github, context }) => {
       }
     }`;
 
-  const variables = await github.graphql(query, constants);
+  const queryResponse = await github.graphql(query, constants);
+
+  const variables = {
+    ...constants,
+    PULL_REQUEST_ID: queryResponse.repository.pullRequest.id,
+  };
 
   const mutation = `
     mutation EnableAutoMerge($PULL_REQUEST_ID: ID!) {
       enablePullRequestAutoMerge(input: {
         mergeMethod: SQUASH,
         pullRequestId: $PULL_REQUEST_ID,
-      }) {
-        pullRequest {
-          autoMergeRequest {
-            enabledAt
-            mergeMethod
-          }
-          number
-          title
-        }
-      }
+      })
     }`;
 
   await github.graphql(mutation, {
-    PULL_REQUEST_ID: variables.repository.pullRequest.id,
+    PULL_REQUEST_ID: variables.PULL_REQUEST_ID,
   });
 
   console.log("Auto merge enabled for pull request.");

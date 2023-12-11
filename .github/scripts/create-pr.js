@@ -1,7 +1,9 @@
 module.exports = async ({ github, context }) => {
-  const HEAD_BRANCH = context.ref.replace("refs/heads/", "");
-  const OWNER_NAME = context.repo.owner;
-  const REPO_NAME = context.repo.repo;
+  const constants = {
+    HEAD_BRANCH: context.ref.replace("refs/heads/", ""),
+    OWNER_NAME: context.repo.owner,
+    REPO_NAME: context.repo.repo,
+  };
 
   const query = `
     query GetPullRequestCommitCount($OWNER_NAME: String!, $REPO_NAME: String!, $HEAD_BRANCH: String!) {
@@ -29,21 +31,20 @@ module.exports = async ({ github, context }) => {
       }
     }`;
 
-  const queryResult = await github.graphql(query, {
-    HEAD_BRANCH,
-    OWNER_NAME,
-    REPO_NAME,
-  });
+  const queryResponse = await github.graphql(query, constants);
 
-  const BASE_BRANCH = queryResult.repository.defaultBranchRef.name;
-  const commitsCount =
-    queryResult.repository.defaultBranchRef.compare.commits.totalCount;
-  const PR_BODY = queryResult.repository.ref.target.messageBody;
-  const PR_TITLE = queryResult.repository.ref.target.messageHeadline;
-  const prCount = queryResult.repository.ref.associatedPullRequests.totalCount;
-  const REPO_ID = queryResult.repository.id;
+  const variables = {
+    ...constants,
+    BASE_BRANCH: queryResponse.repository.defaultBranchRef.name,
+    PR_BODY: queryResponse.repository.ref.target.messageBody,
+    PR_TITLE: queryResponse.repository.ref.target.messageHeadline,
+    PR_COUNT: queryResponse.repository.ref.associatedPullRequests.totalCount,
+    REPO_ID: queryResponse.repository.id,
+    COMMITS_COUNT:
+      queryResponse.repository.defaultBranchRef.compare.commits.totalCount,
+  };
 
-  if (prCount === 0 && commitsCount >= 1) {
+  if (variables.PR_COUNT === 0 && variables.COMMITS_COUNT >= 1) {
     const mutation = `
       mutation CreatePR($REPO_ID: ID!, $HEAD_BRANCH: String!, $BASE_BRANCH: String!, $PR_TITLE: String!, $PR_BODY: String) {
         createPullRequest(input: {
@@ -52,28 +53,18 @@ module.exports = async ({ github, context }) => {
           headRefName: $HEAD_BRANCH,
           repositoryId: $REPO_ID,
           title: $PR_TITLE,
-        }) {
-          pullRequest {
-            id
-            number
-            title
-            bodyText
-          }
-        }
+        })
       }`;
 
-    const mutationResult = await github.graphql(mutation, {
-      BASE_BRANCH,
-      HEAD_BRANCH,
-      PR_BODY,
-      PR_TITLE,
-      REPO_ID,
+    await github.graphql(mutation, {
+      BASE_BRANCH: variables.BASE_BRANCH,
+      HEAD_BRANCH: variables.HEAD_BRANCH,
+      PR_BODY: variables.PR_BODY,
+      PR_TITLE: variables.PR_TITLE,
+      REPO_ID: variables.REPO_ID,
     });
 
-    console.log(
-      "Pull Request Created:",
-      mutationResult.createPullRequest.pullRequest,
-    );
+    console.log("Pull Request Created:");
   } else {
     console.log("Conditions not met, no pull request created.");
   }
