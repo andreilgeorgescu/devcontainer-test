@@ -8,12 +8,17 @@ on:
 permissions: read-all
 
 jobs:
-  random_failure_job:
+  pre-merge-ci:
     if: ${{ github.event.issue.pull_request }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Echo Comment Body
+      - name: Check Issue Comment
         env:
           COMMENT_BODY: ${{ github.event.comment.body }}
-        run: echo $COMMENT_BODY
+        run: |
+          if [[ "$COMMENT_BODY" == "/merge" ]]; then
+            echo "true"
+          else
+            echo "false"
+          fi
