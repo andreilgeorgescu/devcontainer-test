@@ -11,14 +11,24 @@ jobs:
   pre-merge-ci:
     if: ${{ github.event.issue.pull_request }}
     runs-on: ubuntu-latest
+    outputs:
+      merge_command_issued: ${{ steps.check_comment.outputs.merge_command_issued }}
 
     steps:
       - name: Check Issue Comment
+        id: check_comment
         env:
           COMMENT_BODY: ${{ github.event.comment.body }}
         run: |
+          echo "merge_command_issued=false" >> $GITHUB_ENV
           if [[ "$COMMENT_BODY" == "/merge" ]]; then
-            echo "true"
-          else
-            echo "false"
+            echo "merge_command_issued=true" >> $GITHUB_ENV
           fi
+
+  another-job:
+    needs: pre-merge-ci
+    runs-on: ubuntu-latest
+    if: ${{ needs.pre-merge-ci.outputs.merge_command_issued == 'true' }}
+    steps:
+      - name: Perform merge actions
+        run: echo "Merge command was issued, performing merge actions"
