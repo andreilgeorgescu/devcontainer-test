@@ -36,12 +36,12 @@ module.exports = async ({ github, context }) => {
   const variables = {
     ...constants,
     BASE_BRANCH: queryResponse.repository.defaultBranchRef.name,
-    PR_BODY: queryResponse.repository.ref.target.messageBody,
-    PR_TITLE: queryResponse.repository.ref.target.messageHeadline,
-    PR_COUNT: queryResponse.repository.ref.associatedPullRequests.totalCount,
-    REPO_ID: queryResponse.repository.id,
     COMMITS_COUNT:
       queryResponse.repository.defaultBranchRef.compare.commits.totalCount,
+    PR_BODY: queryResponse.repository.ref.target.messageBody,
+    PR_COUNT: queryResponse.repository.ref.associatedPullRequests.totalCount,
+    PR_TITLE: queryResponse.repository.ref.target.messageHeadline,
+    REPO_ID: queryResponse.repository.id,
   };
 
   if (variables.PR_COUNT === 0 && variables.COMMITS_COUNT >= 1) {
@@ -64,8 +64,10 @@ module.exports = async ({ github, context }) => {
       REPO_ID: variables.REPO_ID,
     });
 
-    console.log("Pull Request Created:");
+    console.log("Pull request successfully created.");
   } else {
-    console.log("Conditions not met, no pull request created.");
+    console.log(
+      "Conditions for creating a pull request were not met. No pull request has been created.",
+    );
   }
 };

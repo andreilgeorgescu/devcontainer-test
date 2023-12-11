@@ -33,5 +33,5 @@ module.exports = async ({ github, context }) => {
     PULL_REQUEST_ID: variables.PULL_REQUEST_ID,
   });
 
-  console.log("Auto merge enabled for pull request.");
+  console.log("Auto-merge successfully enabled for pull request.");
 };
