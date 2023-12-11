@@ -1,0 +1,26 @@
+name: Pull Request
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+permissions: read-all
+
+jobs:
+  random_fail:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Random Fail Step
+        run: |
+          if [ $((RANDOM % 2)) -eq 0 ]; then
+            echo "This run will succeed."
+          else
+            echo "This run will fail."
+            exit 1
+          fi
