@@ -11,7 +11,7 @@ module.exports = async ({ github, context }) => {
         pullRequest(number: $PR_NUMBER) {
           id
         }
-      }) {
+      } {
         clientMutationId
       }
     }`;

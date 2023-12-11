@@ -1,4 +1,5 @@
 name: Lint PR Title and Associated Issue Title
+
 on:
   pull_request:
     types:
