@@ -1,6 +1,7 @@
 name: Validate pull request before putting into queue
 
-on: pull_request
+on:
+  pull_request: {}
 
 permissions: read-all
 
