@@ -4,3 +4,4 @@ test
 test
 test
 new test
+atomic commit 1
