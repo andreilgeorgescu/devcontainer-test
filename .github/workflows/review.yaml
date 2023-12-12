@@ -1,0 +1,23 @@
+name: Review
+
+on:
+  workflow_dispatch: {}
+
+permissions: read-all
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Enable Review
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const script = require('./.github/scripts/change-project-status.js');
+            await script({ github, context, option_name: 'Review' });
