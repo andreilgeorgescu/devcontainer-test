@@ -38,7 +38,13 @@ module.exports = async ({ github, context, option_name }) => {
   const variables = {
     ...constants,
     // PROJECT_ITEMS: queryResponse.repository.issue.projectItems.nodes,
-    PROJECT_ITEM: queryResponse.repository.issue.projectItems.nodes[0],
+    FIELD_ID:
+      queryResponse.repository.issue.projectItems.nodes[0].project.field.id,
+    ITEM_ID: queryResponse.repository.issue.projectItems.nodes[0].id,
+    PROJECT_ID: queryResponse.repository.issue.projectItems.nodes[0].project.id,
+    OPTION_ID:
+      queryResponse.repository.issue.projectItems.nodes[0].project.field
+        .options[0].id,
   };
 
   const mutation = `
@@ -67,10 +73,10 @@ module.exports = async ({ github, context, option_name }) => {
   // }
 
   await github.graphql(mutation, {
-    FIELD_ID: variables.PROJECT_ITEM.project.field.id,
-    ITEM_ID: variables.PROJECT_ITEM.id,
-    PROJECT_ID: variables.PROJECT_ITEM.project.id,
-    OPTION_ID: variables.PROJECT_ITEM.project.field.options[0].id,
+    FIELD_ID: variables.FIELD_ID,
+    ITEM_ID: variables.ITEM_ID,
+    PROJECT_ID: variables.PROJECT_ID,
+    OPTION_ID: variables.OPTION_ID,
   });
 
   console.log("Auto-merge successfully enabled for pull request.");
