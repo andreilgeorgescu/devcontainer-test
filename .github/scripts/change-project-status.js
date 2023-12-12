@@ -10,7 +10,7 @@ module.exports = async ({ github, context, option_name }) => {
   };
 
   const query = `
-    query Query($FIELD_NAME: String!, $OWNER_NAME: String!, $PR_NUMBER: Int!, $REPO_NAME: String!) {
+    query Query($FIELD_NAME: String!, $OWNER_NAME: String!, $OPTION_NAME: String!, $PR_NUMBER: Int!, $REPO_NAME: String!) {
       repository(owner: $OWNER_NAME, name: $REPO_NAME) {
         issue(number: $PR_NUMBER) {
           projectItems(first: 100) {
@@ -21,8 +21,7 @@ module.exports = async ({ github, context, option_name }) => {
                 field(name: $FIELD_NAME) {
                   ... on ProjectV2SingleSelectField {
                     id
-                    options {
-                      name
+                    options(names: [$OPTION_NAME]) {
                       id
                     }
                   }
@@ -71,9 +70,7 @@ module.exports = async ({ github, context, option_name }) => {
     FIELD_ID: variables.PROJECT_ITEM.project.field.id,
     ITEM_ID: variables.PROJECT_ITEM.id,
     PROJECT_ID: variables.PROJECT_ITEM.project.id,
-    OPTION_ID: variables.PROJECT_ITEM.project.field.options.find(
-      (option) => option.name === variables.OPTION_NAME,
-    ).id,
+    OPTION_ID: variables.PROJECT_ITEM.project.field.options[0].id,
   });
 
   console.log("Auto-merge successfully enabled for pull request.");
