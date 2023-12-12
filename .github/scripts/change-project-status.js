@@ -37,14 +37,14 @@ module.exports = async ({ github, context, option_name }) => {
 
   const variables = {
     ...constants,
-    // PROJECT_ITEMS: queryResponse.repository.issue.projectItems.nodes,
-    FIELD_ID:
-      queryResponse.repository.issue.projectItems.nodes[0].project.field.id,
-    ITEM_ID: queryResponse.repository.issue.projectItems.nodes[0].id,
-    PROJECT_ID: queryResponse.repository.issue.projectItems.nodes[0].project.id,
-    OPTION_ID:
-      queryResponse.repository.issue.projectItems.nodes[0].project.field
-        .options[0].id,
+    PROJECT_ITEMS: queryResponse.repository.issue.projectItems.nodes.map(
+      (project_item) => {
+        field_id: project_item.project.field.id;
+        item_id: project_item.id;
+        project_id: project_item.project.id;
+        option_id: project_item.project.field.options[0].id;
+      },
+    ),
   };
 
   const mutation = `
@@ -61,23 +61,14 @@ module.exports = async ({ github, context, option_name }) => {
       }
     }`;
 
-  // for (const item of variables.PROJECT_ITEMS) {
-  //   await github.graphql(mutation, {
-  //     FIELD_ID: item.project.field.id,
-  //     ITEM_ID: item.id,
-  //     PROJECT_ID: item.project.id,
-  //     OPTION_ID: item.project.field.options.find(
-  //       (option) => option.name === variables.OPTION_NAME,
-  //     ).id,
-  //   });
-  // }
-
-  await github.graphql(mutation, {
-    FIELD_ID: variables.FIELD_ID,
-    ITEM_ID: variables.ITEM_ID,
-    PROJECT_ID: variables.PROJECT_ID,
-    OPTION_ID: variables.OPTION_ID,
-  });
+  for (const project_item of variables.PROJECT_ITEMS) {
+    await github.graphql(mutation, {
+      FIELD_ID: project_item.field_id,
+      ITEM_ID: project_item.item_id,
+      PROJECT_ID: project_item.project_id,
+      OPTION_ID: project_item.option_id,
+    });
+  }
 
   console.log("Auto-merge successfully enabled for pull request.");
 };
