@@ -38,12 +38,12 @@ module.exports = async ({ github, context, option_name }) => {
   const variables = {
     ...constants,
     PROJECT_ITEMS: queryResponse.repository.issue.projectItems.nodes.map(
-      (project_item) => {
-        field_id: project_item.project.field.id;
-        item_id: project_item.id;
-        project_id: project_item.project.id;
-        option_id: project_item.project.field.options[0].id;
-      },
+      (project_item) => ({
+        field_id: project_item.project.field.id,
+        item_id: project_item.id,
+        project_id: project_item.project.id,
+        option_id: project_item.project.field.options[0].id,
+      }),
     ),
   };
 
