@@ -1,7 +1,8 @@
 module.exports = async ({ github, context, option_name }) => {
   const constants = {
     FIELD_NAME: "Status",
-    OPTION_NAME: option_name,
+    // OPTION_NAME: option_name,
+    OPTION_NAME: "Triage",
     OWNER_NAME: context.repo.owner,
     // PR_NUMBER: context.issue.number,
     PR_NUMBER: 75,
