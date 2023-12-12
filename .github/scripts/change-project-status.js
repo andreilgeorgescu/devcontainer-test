@@ -1,4 +1,4 @@
-module.exports = async ({ github, context }) => {
+module.exports = async ({ github, context, option_name }) => {
   const constants = {
     FIELD_NAME: "Status",
     OPTION_NAME: option_name,
