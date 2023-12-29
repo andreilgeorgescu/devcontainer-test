@@ -3,8 +3,7 @@ module.exports = async ({ github, context, option_name }) => {
     FIELD_NAME: "Status",
     OPTION_NAME: option_name,
     OWNER_NAME: context.repo.owner,
-    // PR_NUMBER: context.issue.number,
-    PR_NUMBER: 75,
+    PR_NUMBER: context.issue.number,
     REPO_NAME: context.repo.repo,
   };
 
@@ -16,7 +15,6 @@ module.exports = async ({ github, context, option_name }) => {
             nodes {
               id
               project {
-                id
                 field(name: $FIELD_NAME) {
                   ... on ProjectV2SingleSelectField {
                     id
@@ -25,6 +23,7 @@ module.exports = async ({ github, context, option_name }) => {
                     }
                   }
                 }
+                id
               }
             }
           }

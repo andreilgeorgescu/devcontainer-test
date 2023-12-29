@@ -54,53 +54,57 @@
         "terminal.integrated.stickyScroll.enabled": false,
         "workbench.tree.enableStickyScroll": true,
         //// GitHub Codespace
-        // GitHub Copilot
-        "github.copilot.enable": {
-          "*": true,
-          "plaintext": false,
-          "markdown": true,
-          "scminput": true
-        },
-        // GitHub Copilot Chat
-        "github.copilot.chat.welcomeMessage": "never",
-        // GitHub Pull Requests and Issues
-        "githubIssues.createIssueTriggers": [],
-        "githubIssues.workingIssueFormatScm": "${issueTitle}\n\nResolves ${issueNumberLabel}",
-        "githubPullRequests.assignCreated": "${user}",
-        "githubPullRequests.defaultCreateOption": "createAutoMerge",
-        "githubPullRequests.defaultMergeMethod": "squash",
-        "githubPullRequests.notifications": "pullRequests",
-        "githubPullRequests.pullBranch": "always",
-        "githubPullRequests.pushBranch": "always",
-        "githubPullRequests.terminalLinksHandler": "vscode",
-        // GitLens
-        "gitlens.currentLine.enabled": false,
-        "gitlens.defaultDateFormat": "YYYY-MM-DD",
-        "gitlens.defaultTimeFormat": "H:mm",
-        // Live Share
-        "liveshare.launcherClient": "visualStudioCode",
-        "liveshare.notebooks.allowGuestExecuteCells": true,
-        // Path Intellisense
+        // christian-kohler.path-intellisense
         "javascript.suggest.paths": false,
         "path-intellisense.autoSlashAfterDirectory": true,
         "path-intellisense.autoTriggerNextSuggestion": true,
         "path-intellisense.showHiddenFiles": true,
         "typescript.suggest.paths": false,
-        // Trunk Check
+        // eamodio.gitlens
+        "gitlens.currentLine.enabled": false,
+        "gitlens.defaultDateFormat": "YYYY-MM-DD",
+        "gitlens.defaultTimeFormat": "H:mm",
+        // GitHub.copilot
+        "github.copilot.enable": {
+          "*": true
+        },
+        // GitHub.copilot-chat
+        "github.copilot.chat.welcomeMessage": "never",
+        // GitHub.vscode-pull-request-github
+        "githubIssues.createIssueTriggers": [],
+        "githubIssues.issueBranchTitle": "issue${issueNumber}",
+        "githubIssues.workingIssueFormatScm": "${issueTitle}\n\nResolves ${issueNumberLabel}",
+        "githubPullRequests.assignCreated": "${user}",
+        "githubPullRequests.createOnPublishBranch": "never",
+        "githubPullRequests.defaultCreateOption": "createDraft",
+        "githubPullRequests.defaultMergeMethod": "squash",
+        "githubPullRequests.notifications": "pullRequests",
+        "githubPullRequests.pullBranch": "always",
+        "githubPullRequests.pushBranch": "always",
+        "githubPullRequests.terminalLinksHandler": "vscode",
+        // mcr.microsoft.com/devcontainers/base:1-ubuntu-22.04
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        // ms-vsliveshare.vsliveshare
+        "liveshare.allowGuestDebugControl": true,
+        "liveshare.allowGuestTaskControl": true,
+        "liveshare.languages.allowGuestCommandControl": true,
+        "liveshare.launcherClient": "visualStudioCode",
+        "liveshare.notebooks.allowGuestExecuteCells": true,
+        "liveshare.publishWorkspaceInfo": true,
+        "liveshare.showVerboseNotifications": false,
+        // redhat.vscode-yaml
+        "yaml.extension.recommendations": false,
+        "yaml.format.enable": false,
+        "yaml.validate": false,
+        // trunk.io
         "editor.defaultFormatter": "trunk.io",
         "files.readonlyExclude": {
           // ".trunk/configs/": true,
           ".trunk/configs/**": true,
           ".trunk/trunk.yaml": true
         },
-        // Ubuntu
-        "terminal.integrated.defaultProfile.linux": "zsh",
-        // YAML
-        "yaml.extension.recommendations": false,
-        "yaml.format.enable": false,
-        "yaml.validate": false
       }
     }
   },
-  "updateContentCommand": "./scripts/updateContentCommand.bash"
+  // "updateContentCommand": "./scripts/updateContentCommand.bash"
 }
