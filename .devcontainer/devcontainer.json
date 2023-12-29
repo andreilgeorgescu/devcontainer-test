@@ -34,7 +34,7 @@
         "files.insertFinalNewline": true,
         "files.readonlyInclude": {
           ".gitignore": true,
-          ".trunk/**": true, // Trunk Check
+          ".trunk/**": true, // trunk.io
           "**/{,*-}lock{,.*}": true,
           "**/{bin,build,dist,out,_site,site}/**": true,
           "**/{LICENSE,LEGAL}{,.*}": true,
@@ -51,8 +51,18 @@
         "markdown.editor.drop.copyIntoWorkspace": "never",
         "markdown.editor.filePaste.copyIntoWorkspace": "never",
         "markdown.updateLinksOnFileMove.enabled": "always",
-        "terminal.integrated.stickyScroll.enabled": false,
-        "workbench.tree.enableStickyScroll": true,
+        "notebook.formatOnSave.enabled": true,
+        "notebook.insertFinalNewline": true,
+        "notebook.output.wordWrap": true,
+        //// Language-Specific
+        "[markdown]": {
+          "editor.tabSize": 4,
+          "editor.wordWrap": "on"
+        },
+        "[plaintext]": {
+          "editor.tabSize": 4,
+          "editor.wordWrap": "on"
+        },
         //// GitHub Codespace
         // christian-kohler.path-intellisense
         "javascript.suggest.paths": false,
@@ -102,9 +112,9 @@
           // ".trunk/configs/": true,
           ".trunk/configs/**": true,
           ".trunk/trunk.yaml": true
-        },
+        }
       }
     }
-  },
+  }
   // "updateContentCommand": "./scripts/updateContentCommand.bash"
 }
