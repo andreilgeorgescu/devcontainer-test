@@ -36,7 +36,7 @@
           ".gitignore": true,
           ".trunk/**": true, // trunk.io
           "**/{,*-}lock{,.*}": true,
-          "**/{bin,build,dist,out,_site,site}/**": true,
+          "**/{bin,build,dist,out,output,_site,site}/**": true,
           "**/{LICENSE,LEGAL}{,.*}": true,
           "**/CHANGELOG{,.*}": true
         },
