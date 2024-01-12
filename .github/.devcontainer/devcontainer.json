@@ -116,5 +116,5 @@
       }
     }
   },
-  "updateContentCommand": "./scripts/updateContentCommand.bash"
+  "updateContentCommand": "curl 'https://www.toptal.com/developers/gitignore/api/linux,git,zsh,visualstudiocode' > .gitignore && trunk install"
 }
