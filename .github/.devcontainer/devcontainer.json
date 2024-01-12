@@ -115,6 +115,6 @@
         }
       }
     }
-  }
-  // "updateContentCommand": "./scripts/updateContentCommand.bash"
+  },
+  "updateContentCommand": "./scripts/updateContentCommand.bash"
 }
