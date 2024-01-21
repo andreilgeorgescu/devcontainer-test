@@ -116,5 +116,5 @@
       }
     }
   },
-  "updateContentCommand": "curl 'https://www.toptal.com/developers/gitignore/api/linux,git,zsh,visualstudiocode' > .gitignore && trunk init --lock --no-to-all && true && trunk install && trunk actions enable trunk-check-pre-push && trunk actions enable trunk-fmt-pre-commit"
+  "updateContentCommand": "curl 'https://www.toptal.com/developers/gitignore/api/linux,git,zsh,visualstudiocode' > .gitignore && trunk init --lock --no-to-all || trunk install && trunk actions enable trunk-check-pre-push && trunk actions enable trunk-fmt-pre-commit"
 }
