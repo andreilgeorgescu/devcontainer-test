@@ -76,7 +76,10 @@
         "gitlens.defaultTimeFormat": "H:mm",
         // GitHub.copilot
         "github.copilot.enable": {
-          "*": true
+          "*": false,
+          "plaintext": false,
+          "markdown": false,
+          "scminput": false
         },
         // GitHub.copilot-chat
         "github.copilot.chat.welcomeMessage": "never",
@@ -109,9 +112,22 @@
         // trunk.io
         "editor.defaultFormatter": "trunk.io",
         "files.readonlyExclude": {
-          // ".trunk/configs/": true,
           ".trunk/configs/**": true,
           ".trunk/trunk.yaml": true
+        },
+        "files.exclude": {
+          "**/.trunk/*actions/": true,
+          "**/.trunk/*logs/": true,
+          "**/.trunk/*notifications/": true,
+          "**/.trunk/*out/": true,
+          "**/.trunk/*plugins/": true
+        },
+        "files.watcherExclude": {
+          "**/.trunk/*actions/": true,
+          "**/.trunk/*logs/": true,
+          "**/.trunk/*notifications/": true,
+          "**/.trunk/*out/": true,
+          "**/.trunk/*plugins/": true
         }
       }
     }
